@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: apidev
+  namespace: uniteyns
+  labels:
+    app: apidev
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: apidev
+  template:
+    metadata:
+      labels:
+        app: apidev
+    spec:
+      containers:
+        - name: apidev
+          image: dxb.ocir.io/axqszopqq0bi/dev-unitey-api:dev-5
+          imagePullPolicy: Always
+          resources:
+            requests:
+              memory: "100Mi"
+              cpu: "100m"
+            limits:
+              memory: "200Mi"
+              cpu: "200m"
+          env:
+            - name: DATABASE_HOST
+              value: "139.185.46.212"
+            - name: DATABASE_PORT
+              value: "27017"
+            - name: DATABASE_NAME
+              value: "uniteydb"
+            - name: DATABASE_USER
+              valueFrom:
+                secretKeyRef:
+                  name: mongodb-secret
+                  key: mongo-root-username
+            - name: DATABASE_PASSWORD
+              valueFrom: 
+                secretKeyRef:
+                  name: mongodb-secret
+                  key: mongo-root-password
+            - name: JWT_SECRET_KEY
+              value: "settings.SECRET_KEY"
+            - name: JWT_REFRESH_SECRET_KEY
+              value: "158112747"
+            - name: ACCESS_TOKEN_EXPIRY
+              value: "30000"
+            - name: REFRESH_TOKEN_EXPIRY
+              value: "30000"
+          ports:
+            - containerPort: 3000
+              protocol: TCP
+      imagePullSecrets:
+        - name: ocirsecret
+
