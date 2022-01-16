@@ -4,7 +4,9 @@ pipeline {
         stage('Example') {
             steps {
                 echo 'Hello World'
-                echo $tag_name
+                script {
+                    println "printtag = ${tag_name}"
+                }
             }
         }
     }
